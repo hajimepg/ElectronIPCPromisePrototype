@@ -3,6 +3,8 @@ import * as url from "url";
 
 import { app, BrowserWindow } from "electron";
 
+import IPCPromiseReceiver from "../ipcPromise/ipcPromiseReceiver";
+
 let window: BrowserWindow | null;
 
 function createWindow() {
@@ -35,4 +37,20 @@ app.on("activate", () => {
     if (window === null) {
         createWindow();
     }
+});
+
+const ipcPromiseReceiver = new IPCPromiseReceiver();
+
+ipcPromiseReceiver.on("channel1", (payload: any, callback: (result: any) => void) => {
+    callback("channel1 called");
+});
+
+ipcPromiseReceiver.on("channel2", (payload: any, callback: (result: any) => void) => {
+    setTimeout(() => {
+        callback("channel2 called");
+    }, 1000);
+});
+
+ipcPromiseReceiver.on("double", (payload: number, callback: (result: any) => void) => {
+    callback(payload * 2);
 });
